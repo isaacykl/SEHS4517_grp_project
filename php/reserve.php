@@ -33,11 +33,6 @@ function sendResponse($success, $message, $data = null, $httpCode = 200) {
     exit;
 }
 
-// Function to sanitize input
-function sanitizeInput($data) {
-    return htmlspecialchars(strip_tags(trim($data)));
-}
-
 // Function to generate unique booking reference
 function generateBookingReference() {
     return 'BK' . date('Ymd') . strtoupper(substr(uniqid(), -6));
@@ -147,7 +142,7 @@ try {
     // Get room details and verify it exists
     $roomStmt = $pdo->prepare("
         SELECT 
-            ri.rm_id,
+            ri.room_id,
             ri.room_number,
             ri.price_per_night,
             rt.room_type_name,
@@ -157,7 +152,7 @@ try {
         FROM room_inventory ri
         JOIN room_type rt ON ri.room_type_id = rt.room_type_id
         JOIN hotels h ON ri.hotel_id = h.hotel_id
-        WHERE ri.rm_id = ?
+        WHERE ri.room_id = ?
     ");
     
     $roomStmt->execute([$roomId]);
@@ -177,7 +172,7 @@ try {
     $availabilityStmt = $pdo->prepare("
         SELECT COUNT(*) as booking_count
         FROM bookings
-        WHERE rm_id = ?
+        WHERE room_id = ?
         AND status IN ('confirmed', 'pending')
         AND (
             (check_in_date <= ? AND check_out_date > ?)
@@ -211,7 +206,7 @@ try {
         INSERT INTO bookings (
             booking_reference,
             user_id,
-            rm_id,
+            room_id,
             check_in_date,
             check_out_date,
             adults_count,

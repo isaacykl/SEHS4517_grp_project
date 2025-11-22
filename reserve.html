@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room Reservation - Grandview Hotels</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="reservation-container">
+            <div class="logo-section">
+                <img src="images/logo.svg" alt="Grandview Hotels Logo" class="logo" />
+            </div>
+            
+            <h1>Reserve Your Room</h1>
+            <p class="subtitle">Find and book the perfect accommodation for your stay</p>
+            
+            <!-- Search Criteria Section -->
+            <div class="search-section">
+                <h2>Search Available Rooms</h2>
+                
+                <form id="searchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="checkInDate">Check-in Date <span class="required">*</span></label>
+                            <input type="date" id="checkInDate" name="checkInDate" required="required" />
+                            <span class="error-message" id="checkInDateError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkOutDate">Check-out Date <span class="required">*</span></label>
+                            <input type="date" id="checkOutDate" name="checkOutDate" required="required" />
+                            <span class="error-message" id="checkOutDateError"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regionId">Preferred Region <span class="required">*</span></label>
+                            <select id="regionId" name="regionId" required="required">
+                                <option value="">-- Select Region --</option>
+                            </select>
+                            <span class="error-message" id="regionIdError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="adultsCount">Adults <span class="required">*</span></label>
+                            <input type="number" id="adultsCount" name="adultsCount" min="1" value="1" required="required" />
+                            <span class="error-message" id="adultsCountError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="childrenCount">Children</label>
+                            <input type="number" id="childrenCount" name="childrenCount" min="0" value="0" />
+                            <span class="error-message" id="childrenCountError"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Search Rooms</button>
+                        <button type="button" class="btn btn-secondary" id="clearSearchBtn">Clear</button>
+                        <button type="button" class="btn btn-link" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Hotels List Section -->
+            <div class="hotels-section" id="hotelsSection" style="display: none;">
+                <h2>Available Hotels</h2>
+                <div id="hotelsList" class="hotels-list">
+                    <!-- Hotels will be loaded here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Rooms List Section -->
+            <div class="rooms-section" id="roomsSection" style="display: none;">
+                <div class="rooms-header">
+                    <h2>Available Rooms</h2>
+                    <button type="button" class="btn btn-link" id="backToHotelsBtn">← Back to Hotels</button>
+                </div>
+                <div id="selectedHotelInfo" class="hotel-info">
+                    <!-- Selected hotel info will be displayed here -->
+                </div>
+                <div id="roomsList" class="rooms-list">
+                    <!-- Rooms will be loaded here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Reservation Confirmation Section -->
+            <div class="confirmation-section" id="confirmationSection" style="display: none;">
+                <h2>Confirm Your Reservation</h2>
+                <div id="bookingSummary" class="booking-summary">
+                    <!-- Booking details will be displayed here -->
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="confirmReserveBtn">Reserve</button>
+                    <button type="button" class="btn btn-secondary" id="backToRoomsBtn">Back to Rooms</button>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div class="loading" id="loadingIndicator" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+            
+            <!-- Message Display -->
+            <div class="form-message" id="formMessage"></div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/reserve.js"></script>
+</body>
+</html>

@@ -113,8 +113,10 @@ $(document).ready(function() {
                         window.location.href = response.redirect || 'reserve.html';
                     }, 1000);
                 } else {
+                    // Show error message inline instead of redirecting to error page
                     $('#formMessage')
-                        .text(response.message || 'Login failed. Please check your credentials.')
+                        .html('<strong>Sorry, login failed.</strong><br>' + 
+                              (response.message || 'Invalid email or password. Please try again.'))
                         .addClass('error')
                         .show();
                 }
@@ -122,14 +124,18 @@ $(document).ready(function() {
             error: function(xhr) {
                 submitBtn.prop('disabled', false).text(originalText);
                 
-                let errorMessage = 'An error occurred. Please try again.';
+                let errorMessage = 'Sorry, login failed. ';
                 
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
+                if (xhr.status === 401) {
+                    errorMessage += 'Invalid email or password.';
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage += xhr.responseJSON.message;
+                } else {
+                    errorMessage += 'An error occurred. Please try again.';
                 }
                 
                 $('#formMessage')
-                    .text(errorMessage)
+                    .html(errorMessage)
                     .addClass('error')
                     .show();
             }

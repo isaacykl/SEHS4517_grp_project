@@ -15,6 +15,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const APACHE_URL = process.env.APACHE_URL || 'http://localhost';
 
 // In-memory storage for booking confirmations (use database in production)
 const bookingConfirmations = new Map();
@@ -102,13 +103,23 @@ app.get('/confirmation/:bookingReference', (req, res) => {
                 <meta charset="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Booking Not Found</title>
-                <link rel="stylesheet" href="/css/style.css" />
+                <link rel="stylesheet" href="${APACHE_URL}/css/style.css" />
+                <link rel="stylesheet" href="${APACHE_URL}/css/responsive.css" />
             </head>
             <body>
                 <div class="container">
-                    <h1>Booking Not Found</h1>
-                    <p>The booking reference you're looking for does not exist.</p>
-                    <button onclick="window.location.href='/'">Go to Homepage</button>
+                    <div class="registration-container">
+                        <div class="logo-section">
+                            <img src="${APACHE_URL}/images/logo.svg" alt="Hotel Logo" class="logo" />
+                        </div>
+                        
+                        <h1>Booking Not Found</h1>
+                        <p class="subtitle">The booking reference you're looking for does not exist.</p>
+                        
+                        <div class="form-actions">
+                            <a href="${APACHE_URL}/index.html" class="btn btn-primary">Go to Homepage</a>
+                        </div>
+                    </div>
                 </div>
             </body>
             </html>
@@ -123,90 +134,188 @@ app.get('/confirmation/:bookingReference', (req, res) => {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>Booking Confirmation - Hotel Booking System</title>
-            <link rel="stylesheet" href="/css/style.css" />
+            <link rel="stylesheet" href="${APACHE_URL}/css/style.css" />
+            <link rel="stylesheet" href="${APACHE_URL}/css/responsive.css" />
+            <style>
+                .confirmation-content {
+                    text-align: center;
+                    padding: 20px 0;
+                }
+                
+                .success-icon {
+                    width: 80px;
+                    height: 80px;
+                    margin: 0 auto 30px;
+                    background: #4CAF50;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 48px;
+                    color: white;
+                    font-weight: bold;
+                }
+                
+                .confirmation-content h1 {
+                    color: #2c3e50;
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                }
+                
+                .confirmation-content > p {
+                    color: #7f8c8d;
+                    font-size: 16px;
+                    margin-bottom: 30px;
+                }
+                
+                .booking-ref {
+                    background: #e8f5e9;
+                    padding: 15px;
+                    border-radius: 5px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-bottom: 30px;
+                    border-left: 4px solid #4CAF50;
+                }
+                
+                .booking-details {
+                    text-align: left;
+                    margin: 30px 0;
+                    padding: 25px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border: 1px solid #e0e0e0;
+                }
+                
+                .detail-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                
+                .detail-row:last-child {
+                    border-bottom: none;
+                    padding-top: 20px;
+                    margin-top: 10px;
+                    border-top: 2px solid #4CAF50;
+                }
+                
+                .detail-label {
+                    font-weight: 600;
+                    color: #555;
+                }
+                
+                .detail-value {
+                    color: #2c3e50;
+                    text-align: right;
+                }
+                
+                .total-price {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #4CAF50;
+                }
+                
+                .confirmation-note {
+                    color: #7f8c8d;
+                    font-size: 14px;
+                    margin: 20px 0;
+                    font-style: italic;
+                }
+            </style>
         </head>
         <body>
-            <div class="confirmation-container">
-                <div class="success-icon">✓</div>
-                
-                <div class="confirmation-header">
-                    <h1>Thank You for Your Reservation!</h1>
-                    <p>Your booking has been confirmed successfully.</p>
+            <div class="container">
+                <div class="registration-container">
+                    <div class="logo-section">
+                        <img src="${APACHE_URL}/images/logo.svg" alt="Hotel Logo" class="logo" />
+                    </div>
+                    
+                    <div class="confirmation-content">
+                        <div class="success-icon">✓</div>
+                        
+                        <h1>Thank You for Your Reservation!</h1>
+                        <p>Your booking has been confirmed successfully.</p>
+                        
+                        <div class="booking-ref">
+                            Booking Reference: ${booking.bookingReference}
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Guest Name:</span>
+                                <span class="detail-value">${booking.userName}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Email:</span>
+                                <span class="detail-value">${booking.userEmail}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Hotel:</span>
+                                <span class="detail-value">${booking.hotelName}</span>
+                            </div>
+                            
+                            ${booking.hotelAddress ? `
+                            <div class="detail-row">
+                                <span class="detail-label">Address:</span>
+                                <span class="detail-value">${booking.hotelAddress}</span>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Room Type:</span>
+                                <span class="detail-value">${booking.roomType}</span>
+                            </div>
+                            
+                            ${booking.roomNumber ? `
+                            <div class="detail-row">
+                                <span class="detail-label">Room Number:</span>
+                                <span class="detail-value">${booking.roomNumber}</span>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Check-in Date:</span>
+                                <span class="detail-value">${formatDate(booking.checkInDate)}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Check-out Date:</span>
+                                <span class="detail-value">${formatDate(booking.checkOutDate)}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Number of Nights:</span>
+                                <span class="detail-value">${booking.nights}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Guests:</span>
+                                <span class="detail-value">
+                                    ${booking.adultsCount} Adult${booking.adultsCount > 1 ? 's' : ''}
+                                    ${booking.childrenCount > 0 ? `, ${booking.childrenCount} Child${booking.childrenCount > 1 ? 'ren' : ''}` : ''}
+                                </span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Total Price:</span>
+                                <span class="detail-value total-price">$${booking.totalPrice}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="confirmation-note">
+                            A confirmation email has been sent to <strong>${booking.userEmail}</strong>
+                        </p>
+                        
+                        <div class="form-actions">
+                            <a href="${APACHE_URL}/index.html" class="btn btn-primary">OK</a>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="booking-ref">
-                    Booking Reference: ${booking.bookingReference}
-                </div>
-                
-                <div class="booking-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Guest Name:</span>
-                        <span class="detail-value">${booking.userName}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Email:</span>
-                        <span class="detail-value">${booking.userEmail}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Hotel:</span>
-                        <span class="detail-value">${booking.hotelName}</span>
-                    </div>
-                    
-                    ${booking.hotelAddress ? `
-                    <div class="detail-row">
-                        <span class="detail-label">Address:</span>
-                        <span class="detail-value">${booking.hotelAddress}</span>
-                    </div>
-                    ` : ''}
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Room Type:</span>
-                        <span class="detail-value">${booking.roomType}</span>
-                    </div>
-                    
-                    ${booking.roomNumber ? `
-                    <div class="detail-row">
-                        <span class="detail-label">Room Number:</span>
-                        <span class="detail-value">${booking.roomNumber}</span>
-                    </div>
-                    ` : ''}
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Check-in Date:</span>
-                        <span class="detail-value">${formatDate(booking.checkInDate)}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Check-out Date:</span>
-                        <span class="detail-value">${formatDate(booking.checkOutDate)}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Number of Nights:</span>
-                        <span class="detail-value">${booking.nights}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Guests:</span>
-                        <span class="detail-value">
-                            ${booking.adultsCount} Adult${booking.adultsCount > 1 ? 's' : ''}
-                            ${booking.childrenCount > 0 ? `, ${booking.childrenCount} Child${booking.childrenCount > 1 ? 'ren' : ''}` : ''}
-                        </span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Total Price:</span>
-                        <span class="detail-value total-price">$${booking.totalPrice}</span>
-                    </div>
-                </div>
-                
-                <p class="confirmation-note">
-                    A confirmation email has been sent to <strong>${booking.userEmail}</strong>
-                </p>
-                
-                <a href="/" class="btn-ok">OK</a>
             </div>
         </body>
         </html>
@@ -236,10 +345,10 @@ app.get('/health', (req, res) => {
 });
 
 /**
- * Homepage redirect
+ * Homepage redirect - redirect to Apache server
  */
 app.get('/', (req, res) => {
-    res.redirect('/index.html');
+    res.redirect(`${APACHE_URL}/index.html`);
 });
 
 /**
@@ -273,6 +382,7 @@ app.listen(PORT, () => {
     console.log(`Server running on: http://localhost:${PORT}`);
     console.log(`Confirmation API: http://localhost:${PORT}/api/confirmation`);
     console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`Apache server: ${APACHE_URL}`);
     console.log('='.repeat(50));
 });
 

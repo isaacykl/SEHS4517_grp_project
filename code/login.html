@@ -1,26 +1,33 @@
+<!--SEHS4517 Web Application Development and Management
+// Group Projrct
+// Submission date: 29 November 2025
+// Full name: Yun Ka Lok
+// Student ID: 24056180S
+-->
+
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Hotel</title>
+    <script src="login_script_frontend.js"></script>
     <link rel="stylesheet" href="login_style.css">
 </head>
 <body>
     <div class="login-container">
-        <h2>Login Hotel</h2>
+        <h2>Login Victoria Hotel</h2>
         <form action="login.php" method="POST" onsubmit="return validateForm()">
             <div class="input-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email">
             </div>
             <div class="input-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
             </div>
             <button type="submit">Login</button>
         </form>
     </div>
-    <script src="login_script_frontend.js"></script>
 </body>
 </html>

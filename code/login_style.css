@@ -1,6 +1,15 @@
+/*SEHS4517 Web Application Development and Management
+// Group Projrct
+// Submission date: 29 November 2025
+// Full name: Yun Ka Lok
+// Student ID: 24056180S
+*/
+
 body {
     font-family: Arial, sans-serif;
-    background: #99bdf5;
+    background-image: url("Deluxe Room.avif"); /* 確認路徑正確 */
+    background-size: cover;
+    background-position: center; /* 讓圖片居中 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,13 +18,14 @@ body {
 }
 
 .login-container {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.85); /* 半透明白色 */
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     width: 350px;
     text-align: center;
 }
+
 
 .input-group {
     margin-bottom: 15px;

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>預約設施</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        .recommended-rooms {
+            margin-top: 20px;
+        }
+        
+        .room-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .room-card button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4b3d97;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .room-card button:hover {
+            background-color: #3b2e76;
+        }
+        
+        .sorting-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4b3d97;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .sorting-button:hover {
+            background-color: #3b2e76;
+        }
+        /* Existing styles... */
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .region-input {
+            margin-left: 25px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-top: 15px;
+        }
+        
+        .date-selection,
+        .guest-selection {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 10px;
+            width: 180px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #4b3d97;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s;
+            margin-right: 5px;
+        }
+        
+        button:hover {
+            color: #3b2e76;
+        }
+        
+        .check-availability {
+            background-color: #4b3d97;
+            color: white;
+        }
+        
+        .check-availability:hover {
+            background-color: #3b2e76;
+        }
+        
+        .clear-button,
+        .cancel-button {
+            background-color: red;
+            color: white;
+        }
+        
+        .clear-button:hover,
+        .cancel-button:hover {
+            background-color: darkred;
+        }
+        
+        .guest-counter {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .calendar-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            z-index: 10;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .date-cell {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .date-cell.selected {
+            background-color: #4b3d97;
+            color: white;
+        }
+        
+        .date-cell.checkin {
+            background-color: #ffcc00;
+            color: white;
+        }
+        
+        .date-cell.disabled {
+            color: #ddd;
+            cursor: not-allowed;
+        }
+        
+        .date-cell:hover:not(.disabled) {
+            background-color: #f0f0f0;
+        }
+        
+        .day-label {
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .region-input {
+            margin: 20px;
+        }
+        
+        #region {
+            width: 500px;
+            font-size: 18px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Hi, [user]</h1>
+            <div class="region-input">
+                <select id="region">
+                    <option value="">Select Region</option>
+                    <option value="Downtown">Downtown</option>
+                    <option value="Beachfront">Beachfront</option>
+                    <option value="Airport">Airport</option>
+                    <option value="Suburban">Suburban</option>
+                </select>
+            </div>
+            <button class="cancel-button" onclick="cancelReservation()">Cancel Reservation</button>
+        </div>
+
+        <div class="input-group">
+            <div class="date-selection">
+                <div class="calendar">
+                    <label>Check-in:</label>
+                    <input type="text" id="checkin" onclick="toggleCalendar('checkinCalendar', 'checkoutCalendar')" readonly>
+                    <div class="calendar-popup" id="checkinCalendar"></div>
+                </div>
+                <div class="calendar">
+                    <label>Check-out:</label>
+                    <input type="text" id="checkout" onclick="toggleCalendar('checkoutCalendar', 'checkinCalendar')" readonly>
+                    <div class="calendar-popup" id="checkoutCalendar"></div>
+                </div>
+            </div>
+
+            <div class="guest-selection">
+                <div class="guest-counter">
+                    <label>Adults:</label>
+                    <button onclick="changeGuests('adults', -1)">-</button>
+                    <span id="adultCount">2</span>
+                    <button onclick="changeGuests('adults', 1)">+</button>
+                </div>
+                <div class="guest-counter">
+                    <label>Children:</label>
+                    <button onclick="changeGuests('children', -1)">-</button>
+                    <span id="childrenCount">0</span>
+                    <button onclick="changeGuests('children', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check Availability Button -->
+        <div class="actions">
+            <button class="check-availability" onclick="checkAvailability()">CHECK AVAILABILITY</button>
+            <button class="clear-button" onclick="clearData()">Clear</button>
+        </div>
+
+        <!-- Sort by Price Button -->
+        <div class="recommended-rooms">
+            <h2>熱門房間推薦</h2>
+            <button class="sorting-button" onclick="sortRoomsByPrice()">Sort by Price</button>
+            <div id="recommendedRooms"></div>
+        </div>
+
+        <div id="availableRooms" class="available-rooms">
+            <!-- Section to display available rooms -->
+        </div>
+    </div>
+
+    <script>
+        let recommendedRooms = [{
+                id: 1,
+                name: 'Ocean View Suite',
+                price: 250,
+                region: 'Beachfront'
+            }, {
+                id: 2,
+                name: 'Grand Plaza Double',
+                price: 180,
+                region: 'Downtown'
+            }, {
+                id: 3,
+                name: 'Quiet Retreat King',
+                price: 150,
+                region: 'Suburban'
+            },
+            // More rooms can be added here...
+        ];
+
+        function displayRecommendedRooms() {
+            const container = document.getElementById('recommendedRooms');
+            container.innerHTML = '';
+            recommendedRooms.forEach(room => {
+                const roomCard = document.createElement('div');
+                roomCard.className = 'room-card';
+                roomCard.innerHTML = `
+                    <h3>${room.name}</h3>
+                    <p>Price: $${room.price} / night</p>
+                    <button onclick="reserveRoom(${room.id})">Reserve Now</button>
+                `;
+                container.appendChild(roomCard);
+            });
+        }
+
+        function sortRoomsByPrice() {
+            recommendedRooms.sort((a, b) => a.price - b.price);
+            displayRecommendedRooms(); // Refresh the display after sorting
+        }
+
+        function checkAvailability() {
+            const region = document.getElementById('region').value;
+            const checkinDate = document.getElementById('checkin').value;
+            const checkoutDate = document.getElementById('checkout').value;
+            const adults = document.getElementById('adultCount').textContent;
+            const children = document.getElementById('childrenCount').textContent;
+
+            // Simulate fetching data based on user input
+            const availableRooms = fetchAvailableRooms(region, checkinDate, checkoutDate, adults, children);
+            displayAvailableRooms(availableRooms);
+        }
+
+        function fetchAvailableRooms(region, checkinDate, checkoutDate, adults, children) {
+            // Dummy data for demonstration purposes
+            return [{
+                    id: 4,
+                    name: 'Executive Suite',
+                    price: 300,
+                    region: region
+                }, {
+                    id: 5,
+                    name: 'Coastal Paradise Double',
+                    price: 200,
+                    region: region
+                },
+                // More data can be added as needed...
+            ];
+        }
+
+        function displayAvailableRooms(rooms) {
+            const container = document.getElementById('availableRooms');
+            container.innerHTML = ''; // Clear previous results
+            rooms.forEach(room => {
+                const roomCard = document.createElement('div');
+                roomCard.className = 'room-card';
+                roomCard.innerHTML = `
+                    <h3>${room.name}</h3>
+                    <p>Price: $${room.price} / night</p>
+                    <button onclick="reserveRoom(${room.id})">Reserve Now</button>
+                `;
+                container.appendChild(roomCard);
+            });
+        }
+
+        function reserveRoom(roomId) {
+            alert(`Room ${roomId} reserved!`);
+            // Implement actual reservation logic here
+        }
+
+        // Initial call to display recommended rooms
+        displayRecommendedRooms();
+    </script>
+
+</body>
+
+</html>
